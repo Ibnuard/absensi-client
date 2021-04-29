@@ -1,11 +1,14 @@
 package com.arddev.absensi
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.net.http.SslError
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -14,6 +17,8 @@ import android.util.Log
 import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_main.*
 import org.imaginativeworld.oopsnointernet.NoInternetDialog
 import java.io.File
@@ -28,6 +33,10 @@ class MainActivity : AppCompatActivity() {
     private var mUMA: ValueCallback<Array<Uri>>? = null
     private val FCR = 1
     private val FILECHOOSER_RESULTCODE = 1
+
+    var mGeoLocationRequestOrigin: String? = null
+    var mGeoLocationCallback: GeolocationPermissions.Callback? = null
+    val MAX_PROGRESS = 100
 
     private var noInternetDialog: NoInternetDialog? = null
 
@@ -51,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //URL
-        webView.loadUrl("https://mylocation.org/")
+        webView.loadUrl("https://serversatu.net/")
 
 
 
@@ -97,6 +106,78 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(chooserIntent, FCR)
                 return true
             }
+
+            override fun onGeolocationPermissionsShowPrompt(
+                origin: String?,
+                callback: GeolocationPermissions.Callback?
+            ) {
+                if (ContextCompat.checkSelfPermission(
+                        this@MainActivity,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                    != PackageManager.PERMISSION_GRANTED
+                ) {
+
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            this@MainActivity,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                    ) {
+                        AlertDialog.Builder(this@MainActivity)
+                            .setMessage("Please turn ON the GPS to make app work smoothly")
+                            .setNeutralButton(
+                                android.R.string.ok,
+                                DialogInterface.OnClickListener { _, _ ->
+                                    mGeoLocationCallback = callback
+                                    mGeoLocationRequestOrigin = origin
+                                    ActivityCompat.requestPermissions(
+                                        this@MainActivity,
+                                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001
+                                    )
+
+                                })
+                            .show()
+
+                    } else {
+                        //no explanation need we can request the locatio
+                        mGeoLocationCallback = callback
+                        mGeoLocationRequestOrigin = origin
+                        ActivityCompat.requestPermissions(
+                            this@MainActivity,
+                            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001
+                        )
+                    }
+                } else {
+                    //tell the webview that permission has granted
+                    callback!!.invoke(origin, true, true)
+                }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            1001 -> {
+                //if permission is cancel result array would be empty
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //permission was granted
+                    if (mGeoLocationCallback != null) {
+                        mGeoLocationCallback!!.invoke(mGeoLocationRequestOrigin, true, true)
+                    }
+                } else {
+                    //permission denied
+                    if (mGeoLocationCallback != null) {
+                        mGeoLocationCallback!!.invoke(mGeoLocationRequestOrigin, false, false)
+                    }
+                }
+            }
+
         }
     }
 
@@ -213,6 +294,16 @@ class MainActivity : AppCompatActivity() {
             view?.loadUrl("file:///android_asset/ErrorPage.html")
             super.onReceivedError(view, request, error)
         }
+
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
+            handler?.proceed()
+        }
+
+
     }
 
     private fun moveToSplash() {
