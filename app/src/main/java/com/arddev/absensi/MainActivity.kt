@@ -46,6 +46,13 @@ class MainActivity : AppCompatActivity() {
 
         var webView = findViewById<WebView>(R.id.webview)
 
+        /*
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
+        } else {
+            CookieManager.getInstance().setAcceptCookie(true);
+        }*/
+
         webView.settings.javaScriptEnabled = true
         webView.settings.useWideViewPort = true
         webView.settings.domStorageEnabled = true
