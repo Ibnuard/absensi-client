@@ -46,12 +46,8 @@ class MainActivity : AppCompatActivity() {
 
         var webView = findViewById<WebView>(R.id.webview)
 
-        /*
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
-        } else {
-            CookieManager.getInstance().setAcceptCookie(true);
-        }*/
+
+        val PARAMETER: String? = intent.getStringExtra("parameter")
 
         webView.settings.javaScriptEnabled = true
         webView.settings.useWideViewPort = true
@@ -67,7 +63,9 @@ class MainActivity : AppCompatActivity() {
 
 
         //URL
-        webView.loadUrl("https://serversatu.net/")
+        Log.d("LOGIN", "URL : https://serversatu.net/$PARAMETER")
+        webView.loadUrl("https://serversatu.net/$PARAMETER")
+
 
 
 

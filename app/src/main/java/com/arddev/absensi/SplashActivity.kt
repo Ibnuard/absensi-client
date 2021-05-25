@@ -1,5 +1,6 @@
 package com.arddev.absensi
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -22,13 +23,27 @@ class SplashActivity : AppCompatActivity() {
         //hide statusbar
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
+        val sh = getSharedPreferences("UserData", Context.MODE_PRIVATE)
+        val userName = sh.getString("userName", "")
+        val userPassword = sh.getString("userPassword", "")
+        val userToken = sh.getString("userToken", "")
 
         //loading
 
         Handler().postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            if (userName!!.isNotEmpty() && userPassword!!.isNotEmpty() && userToken!!.isNotEmpty()){
+                val generatedUrl = "?user=$userName&pass=$userPassword&token=$userToken"
+
+
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("parameter", generatedUrl)
+                startActivity(intent)
+                finish()
+            }else {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }, 3000)
     }
 
