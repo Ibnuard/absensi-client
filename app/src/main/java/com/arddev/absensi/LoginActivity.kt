@@ -34,6 +34,9 @@ class LoginActivity : AppCompatActivity() {
     private var requestQueue: RequestQueue? = null
     private var isLoading: Boolean = false
 
+    val sheetURL = "https://docs.google.com/spreadsheets/d/101L-l-n_xQ5DBjoKA-OLJsTDXr_0_B0OKRG6J5i-i74/edit#gid=0"
+    val sheetName = "UserData"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -104,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
         val userPassword = mPassword?.text
         val userToken = mToken?.text
 
-        val url = "https://script.google.com/macros/s/AKfycbwUTZayTSsa7AD3Yq26Fx5VNRGVjCOelcdzwiYPfvXHD8ThGnPfp5btNn1tv2gG7J9f/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken"
+        val url = "https://script.google.com/macros/s/AKfycbxz5L_AIc8sHhOHg61nLuA6k6ySdqiO82hPoqvLLrWkBJXaZwRX8fVnfxiyazLM7aGC/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&sheetURL=$sheetURL&sheetName=$sheetName"
 
         val request = JsonObjectRequest(Request.Method.POST, url, null, Response.Listener {
                 response ->try {
