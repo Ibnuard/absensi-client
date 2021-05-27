@@ -80,6 +80,8 @@ class LoginActivity : AppCompatActivity() {
             mPasswordError.visibility = View.GONE
             mTokenError.visibility = View.GONE
         }else{
+            isLoading = false
+
             if (usernameData){
                 mUsernameError.visibility = View.VISIBLE
             }else{
