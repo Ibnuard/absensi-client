@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         var webView = findViewById<WebView>(R.id.webview)
 
 
+        val TYPE: String? = intent.getStringExtra("type")
         val PARAMETER: String? = intent.getStringExtra("parameter")
 
         webView.settings.javaScriptEnabled = true
@@ -64,7 +65,12 @@ class MainActivity : AppCompatActivity() {
 
         //URL
         Log.d("LOGIN", "URL : https://serversatu.net/$PARAMETER")
-        webView.loadUrl("https://serversatu.net/$PARAMETER")
+
+        if (TYPE == "base"){
+            webView.loadUrl("https://serversatu.net/$PARAMETER")
+        }else{
+            webView.loadUrl(PARAMETER)
+        }
 
 
 

@@ -27,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mPassword: EditText
     private lateinit var mToken: EditText
     private lateinit var mButton: CardView
+    private lateinit var mActivateButton: CardView
     private lateinit var mUsernameError: TextView
     private lateinit var mPasswordError: TextView
     private lateinit var mTokenError: TextView
@@ -36,6 +37,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val sheetURL = "https://docs.google.com/spreadsheets/d/101L-l-n_xQ5DBjoKA-OLJsTDXr_0_B0OKRG6J5i-i74/edit#gid=0"
     private val sheetName = "UserData"
+    private val activateURL = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
         mPassword = findViewById(R.id.password_input)
         mToken = findViewById(R.id.token_input)
         mButton = findViewById(R.id.loginButton)
+        mActivateButton = findViewById(R.id.activateButton)
 
         mUsernameError = findViewById(R.id.usernameError)
         mPasswordError = findViewById(R.id.passwordError)
@@ -59,12 +62,26 @@ class LoginActivity : AppCompatActivity() {
             }else null
         }
 
+        mActivateButton.setOnClickListener {
+            if (!isLoading){
+                gotoActivate()
+            }else null
+        }
+
+    }
+
+    private fun gotoActivate() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("type", "activate")
+        intent.putExtra("parameter", activateURL)
+        startActivity(intent)
     }
 
     private fun checkInput() {
         isLoading = true
         mLoginError.visibility = View.GONE
         mButton.setCardBackgroundColor(Color.parseColor("#d2d2d2"))
+        mActivateButton.setCardBackgroundColor(Color.parseColor("#d2d2d2"))
 
 
         val usernameData = isInputEmpty(mUsername.text.toString())
@@ -144,6 +161,7 @@ class LoginActivity : AppCompatActivity() {
             }else{
                 isLoading = false
                 mButton.setCardBackgroundColor(Color.parseColor("#FF7849"))
+                mActivateButton.setCardBackgroundColor(Color.parseColor("#FF7849"))
                 mLoginError.text = message
                 mLoginError.visibility = View.VISIBLE
                 Log.d("LOGIN ACTIVITY", "User not found!")
@@ -163,9 +181,11 @@ class LoginActivity : AppCompatActivity() {
     ) {
         isLoading = false
         mButton.setCardBackgroundColor(Color.parseColor("#FF7849"))
+        mActivateButton.setCardBackgroundColor(Color.parseColor("#FF7849"))
         val generatedUrl = "?user=$userName&pass=$userPassword&token=$userToken"
 
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("type", "base")
         intent.putExtra("parameter", generatedUrl)
         startActivity(intent)
         finish()
