@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -46,8 +47,10 @@ class SplashActivity : AppCompatActivity() {
 
         Handler().postDelayed({
             if (userName!!.isNotEmpty() && userPassword!!.isNotEmpty() && userToken!!.isNotEmpty()){
+                Log.d("SPLASH", "DATA AVAILABLE!")
                 checkUser(userName, userPassword, userToken)
             }else {
+                Log.d("SPLASH", "DATA EMPTY!")
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -60,18 +63,19 @@ class SplashActivity : AppCompatActivity() {
         userPassword: String,
         userToken: String
     ) {
+        val deviceID = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
-        val url = "https://script.google.com/macros/s/AKfycbxz5L_AIc8sHhOHg61nLuA6k6ySdqiO82hPoqvLLrWkBJXaZwRX8fVnfxiyazLM7aGC/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&sheetURL=$sheetURL&sheetName=$sheetName"
+        val url = "https://script.google.com/macros/s/AKfycbzdnwf7_i_Og6N6qlxUm3B74G-mBmaSj3HhyLEN55Df3f3ol3i3EKJ2zk7AfddNzVRg/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&deviceToken=$deviceID&sheetName=$sheetName&sheetURL=$sheetURL"
 
         val request = JsonObjectRequest(Request.Method.POST, url, null, Response.Listener {
                 response ->try {
-            Log.d("LOGIN ACTIVITY", "RESULT : $response")
+            Log.d("SPLASH", "RESULT : $response")
             var strResp = response.toString()
             val jsonObj: JSONObject = JSONObject(strResp)
 
             val data = jsonObj.getString("status")
             val cek = data.equals("400")
-            Log.d("LOGIN ACTIVITY", "DATA : $cek")
+            Log.d("SPLASH", "DATA : $cek")
 
 
             if (!cek){
@@ -83,7 +87,7 @@ class SplashActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
-                Log.d("LOGIN ACTIVITY", "User not found!")
+                Log.d("SPLASH", "User not found!")
             }
 
         } catch (e: JSONException) {

@@ -126,7 +126,9 @@ class LoginActivity : AppCompatActivity() {
         val userPassword = mPassword?.text
         val userToken = mToken?.text
 
-        val url = "https://script.google.com/macros/s/AKfycbxz5L_AIc8sHhOHg61nLuA6k6ySdqiO82hPoqvLLrWkBJXaZwRX8fVnfxiyazLM7aGC/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&sheetURL=$sheetURL&sheetName=$sheetName"
+        val url = "https://script.google.com/macros/s/AKfycbzdnwf7_i_Og6N6qlxUm3B74G-mBmaSj3HhyLEN55Df3f3ol3i3EKJ2zk7AfddNzVRg/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&deviceToken=$deviceID&sheetName=$sheetName&sheetURL=$sheetURL"
+
+        Log.d("LOGIN ACTIVITY", "RESULT : $url")
 
         val request = JsonObjectRequest(Request.Method.POST, url, null, Response.Listener {
                 response ->try {
