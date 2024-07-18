@@ -18,6 +18,7 @@ import org.imaginativeworld.oopsnointernet.NoInternetDialog
 import org.imaginativeworld.oopsnointernet.NoInternetSnackbar
 import org.json.JSONException
 import org.json.JSONObject
+import java.net.URLEncoder
 
 
 class SplashActivity : AppCompatActivity() {
@@ -27,8 +28,10 @@ class SplashActivity : AppCompatActivity() {
     private var noInternetSnackbar: NoInternetSnackbar? = null
     private var requestQueue: RequestQueue? = null
 
-    private val sheetURL = "https://docs.google.com/spreadsheets/d/101L-l-n_xQ5DBjoKA-OLJsTDXr_0_B0OKRG6J5i-i74/edit#gid=0"
-    private val sheetName = "UserData"
+
+    // UPDATE THIS
+    private val sheetURL = "https://docs.google.com/spreadsheets/d/1T0oSK0Av8_YLQz1OMKzU2HThfD9kH3tksC2ILIYileY/edit?gid=0%23gid=0"
+    private val sheetName = "TEST"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +68,8 @@ class SplashActivity : AppCompatActivity() {
     ) {
         val deviceID = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
-        val url = "https://script.google.com/macros/s/AKfycbzdnwf7_i_Og6N6qlxUm3B74G-mBmaSj3HhyLEN55Df3f3ol3i3EKJ2zk7AfddNzVRg/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&deviceToken=$deviceID&sheetName=$sheetName&sheetURL=$sheetURL"
+        val sheet = URLEncoder.encode(sheetURL, "UTF-8")
+        val url = "https://script.google.com/macros/s/AKfycbzQ_IPjwR2-m7pS0BdApkkJOnMxVlB4AVzN-M6nJZImwCXfkWQYDeZ91wV7jUOZ1Ekm/exec?action=getUserData&username=$userName&password=$userPassword&token=$userToken&deviceToken=$deviceID&sheetName=$sheetName&sheetURL=$sheet"
 
         val request = JsonObjectRequest(Request.Method.POST, url, null, Response.Listener {
                 response ->try {
